@@ -8,7 +8,7 @@ namespace Myst.Collections
     public class FastPriorityQueue<TValue, TPriority> : ICollection<(TValue item, TPriority priority)>
     {
         private IComparer<TPriority> _comparer;
-        private FibonacciNode<TValue, TPriority> _head = null;
+        private FastFibonacciNode<TValue, TPriority> _head = null;
         private int _count = 0;
 
         public int Count
@@ -41,7 +41,7 @@ namespace Myst.Collections
 
         public void Add(TValue item, TPriority priority)
         {
-            var node = new FibonacciNode<TValue, TPriority>(item, priority);
+            var node = new FastFibonacciNode<TValue, TPriority>(item, priority);
 
             if (_head == null)
                 _head = node;
@@ -61,7 +61,7 @@ namespace Myst.Collections
 
         public void Add((TValue item, TPriority priority) pair)
         {
-            var node = new FibonacciNode<TValue, TPriority>(pair.item, pair.priority);
+            var node = new FastFibonacciNode<TValue, TPriority>(pair.item, pair.priority);
 
             if (_head == null)
                 _head = node;
@@ -248,7 +248,7 @@ namespace Myst.Collections
 
         private void Consolidate()
         {
-            var roots = new Dictionary<int, FibonacciNode<TValue, TPriority>>((int)(_count * .5f));
+            var roots = new Dictionary<int, FastFibonacciNode<TValue, TPriority>>((int)(_count * .5f));
 
             var rootCount = 0;
             var current = _head;
@@ -329,7 +329,7 @@ namespace Myst.Collections
             }
         }
 
-        private IEnumerable<FibonacciNode<TValue, TPriority>> GetChildren(FibonacciNode<TValue, TPriority> node)
+        private IEnumerable<FastFibonacciNode<TValue, TPriority>> GetChildren(FastFibonacciNode<TValue, TPriority> node)
         {
             var first = node;
             var current = node;
@@ -354,7 +354,7 @@ namespace Myst.Collections
             }
         }
 
-        private void Link(FibonacciNode<TValue, TPriority> child, FibonacciNode<TValue, TPriority> parent)
+        private void Link(FastFibonacciNode<TValue, TPriority> child, FastFibonacciNode<TValue, TPriority> parent)
         {
             child.Left.Right = child.Right;
             child.Right.Left = child.Left;

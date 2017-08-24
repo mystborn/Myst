@@ -12,7 +12,7 @@ namespace Myst.Collections
     public class FastPriorityQueue<T> : ICollection<T>
     {
         private IComparer<T> _comparer;
-        private FibonacciNode<T> _head = null;
+        private FastFibonacciNode<T> _head = null;
         private int _count = 0;
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace Myst.Collections
         /// <param name="item"></param>
         public void Add(T item)
         {
-            var node = new FibonacciNode<T>(item);
+            var node = new FastFibonacciNode<T>(item);
 
             if (_head == null)
                 _head = node;
@@ -218,7 +218,7 @@ namespace Myst.Collections
 
         private void Consolidate()
         {
-            var roots = new Dictionary<int, FibonacciNode<T>>((int)(_count * .5f));
+            var roots = new Dictionary<int, FastFibonacciNode<T>>((int)(_count * .5f));
 
             var rootCount = 0;
             var current = _head;
@@ -297,7 +297,7 @@ namespace Myst.Collections
             }
         }
 
-        private IEnumerable<FibonacciNode<T>> GetChildren(FibonacciNode<T> node)
+        private IEnumerable<FastFibonacciNode<T>> GetChildren(FastFibonacciNode<T> node)
         {
             var first = node;
             var current = node;
@@ -322,7 +322,7 @@ namespace Myst.Collections
             }
         }
 
-        private void Link(FibonacciNode<T> child, FibonacciNode<T> parent)
+        private void Link(FastFibonacciNode<T> child, FastFibonacciNode<T> parent)
         {
             child.Left.Right = child.Right;
             child.Right.Left = child.Left;

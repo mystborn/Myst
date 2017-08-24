@@ -47,7 +47,8 @@
   <ItemGroup>
     <Compile Include="Collections\FastPriorityQueue_T1.cs" />
     <Compile Include="Collections\FastPriorityQueue_T2.cs" />
-    <Compile Include="Internal\FibonacciNodeT1.cs" />
+    <Compile Include="Collections\LookupTable_T3.cs" />
+    <Compile Include="Internal\FastFibonacciNode.cs" />
     <Compile Include="Collections\Grid_T1.cs" />
     <Compile Include="Collections\SerializableDictionary_T2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
