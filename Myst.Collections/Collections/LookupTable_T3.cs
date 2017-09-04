@@ -36,7 +36,10 @@ namespace Myst.Collections
             set
             {
                 var inner = GetInternalSource(row);
+                var count = inner.Count;
                 inner[col] = value;
+                if (inner.Count > count)
+                    ++_count;
             }
         }
 
@@ -111,6 +114,17 @@ namespace Myst.Collections
                 }
             }
             return false;
+        }
+
+        public IEnumerator<(TRow, TCol, TValue)> GetEnumerator()
+        {
+            foreach(var row in _source)
+            {
+                foreach(var col in row.Value)
+                {
+                    yield return (row.Key, col.Key, col.Value);
+                }
+            }
         }
 
         public bool Remove(TRow row, TCol col)
