@@ -43,14 +43,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Collections\Binder_T1.cs" />
     <Compile Include="Collections\FastPriorityQueue_T1.cs" />
     <Compile Include="Collections\FastPriorityQueue_T2.cs" />
     <Compile Include="Collections\LookupTable_T3.cs" />
+    <Compile Include="Collections\Table_T3.cs" />
+    <Compile Include="Collections\Trie_T2.cs" />
     <Compile Include="Extensions\ListExt.cs" />
     <Compile Include="Extensions\TaskExt.cs" />
     <Compile Include="Internal\FastFibonacciNode.cs" />
     <Compile Include="Collections\Grid_T1.cs" />
     <Compile Include="Collections\SerializableDictionary_T2.cs" />
+    <Compile Include="Internal\TableItem.cs" />
+    <Compile Include="Internal\TrieNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

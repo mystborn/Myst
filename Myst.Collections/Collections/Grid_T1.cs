@@ -4,6 +4,12 @@ using System.Collections.Generic;
 
 namespace Myst.Collections
 {
+    /// <summary>
+    /// A generic grid.
+    /// </summary>
+    /// <remarks>
+    /// This implementation was loosely based off of the grid data structure present in Gamemker.
+    /// </remarks>
     public class Grid<T> : ICollection<T>, IEnumerable<T>,  IEnumerable
     {
         #region Fields

@@ -19,6 +19,11 @@ namespace Myst.Collections
 
         public int Count => _count;
 
+        /// <summary>
+        /// Gets or sets the value at the associated row and column.
+        /// </summary>
+        /// <param name="row">The row of the value to get or set.</param>
+        /// <param name="col">The column of the value to get or set.</param>
         public TValue this[TRow row, TCol col]
         {
             get
@@ -28,10 +33,10 @@ namespace Myst.Collections
                     if (inner.TryGetValue(col, out var value))
                         return value;
                     else
-                        throw new ArgumentNullException("col");
+                        throw new ArgumentException($"No column with the key: {col}", "col");
                 }
                 else
-                    throw new ArgumentNullException("row");
+                    throw new ArgumentException($"No row with the key: {row}", "row");
             }
             set
             {
@@ -43,10 +48,24 @@ namespace Myst.Collections
             }
         }
 
+        /// <summary>
+        /// Constructs a new <see cref="LookupTable{TRow, TCol, TValue}"/> with default values.
+        /// </summary>
         public LookupTable() : this(EqualityComparer<TRow>.Default, EqualityComparer<TCol>.Default) { }
 
+        /// <summary>
+        /// Constructs a new <see cref="LookupTable{TRow, TCol, TValue}"/> with the values from the given <paramref name="source"/> inserted.
+        /// </summary>
+        /// <param name="source">A collection of values to be inserted into the table.</param>
         public LookupTable(ICollection<(TRow row, TCol col, TValue value)> source) : this(source, EqualityComparer<TRow>.Default, EqualityComparer<TCol>.Default) { }
 
+        /// <summary>
+        /// Initializes a new <see cref="LookupTable{TRow, TCol, TValue}"/> with the values from the given <paramref name="source"/> inserted
+        /// and using the specified <see cref="IEqualityComparer{T}"/>'s for the rows and columns.
+        /// </summary>
+        /// <param name="source">A collection of values to be inserted into the table.</param>
+        /// <param name="rowComparer">The <see cref="IEqualityComparer{T}"/> used when comparing row values.</param>
+        /// <param name="columnComparer">The <see cref="IEqualityComparer{T}"/> used when comparing column values.</param>
         public LookupTable(ICollection<(TRow row, TCol col, TValue value)> source, IEqualityComparer<TRow> rowComparer, IEqualityComparer<TCol> columnComparer)
         {
             _source = new Dictionary<TRow, Dictionary<TCol, TValue>>(rowComparer);
@@ -58,10 +77,28 @@ namespace Myst.Collections
             }
         }
 
+        /// <summary>
+        /// Initializes a new <see cref="LookupTable{TRow, TCol, TValue}"/> using the specified <see cref="IEqualityComparer{T}"/>'s for the rows and columns.
+        /// </summary>
+        /// <param name="rowComparer">The <see cref="IEqualityComparer{T}"/> used when comparing row values.</param>
+        /// <param name="columnComparer">The <see cref="IEqualityComparer{T}"/> used when comparing column values.</param>
         public LookupTable(IEqualityComparer<TRow> rowComparer, IEqualityComparer<TCol> columnComparer) : this(0, 0, rowComparer, columnComparer) { }
 
+        /// <summary>
+        /// Initializes a new <see cref="LookupTable{TRow, TCol, TValue}"/> with a default capacity for the rows and columns.
+        /// </summary>
+        /// <param name="defaultRows">The default capacity for the rows.</param>
+        /// <param name="defaultColumns">The default capacity for the columns.</param>
         public LookupTable(int defaultRows, int defaultColumns) : this(defaultRows, defaultColumns, EqualityComparer<TRow>.Default, EqualityComparer<TCol>.Default) { }
 
+        /// <summary>
+        /// Initializes a new <see cref="LookupTable{TRow, TCol, TValue}"/> with a default capacity for the rows and columns 
+        /// and using the specified <see cref="IEqualityComparer{T}"/>'s for the rows and columns.
+        /// </summary>
+        /// <param name="defaultRows">The default capacity for the rows.</param>
+        /// <param name="defaultColumns">The default capacity for the columns.</param>
+        /// <param name="rowComparer">The <see cref="IEqualityComparer{T}"/> used when comparing row values.</param>
+        /// <param name="columnComparer">The <see cref="IEqualityComparer{T}"/> used when comparing column values.</param>
         public LookupTable(int defaultRows, int defaultColumns, IEqualityComparer<TRow> rowComparer, IEqualityComparer<TCol> columnComparer)
         {
             _colComparer = columnComparer;
@@ -69,6 +106,12 @@ namespace Myst.Collections
             _source = new Dictionary<TRow, Dictionary<TCol, TValue>>(defaultRows, rowComparer);
         }
 
+        /// <summary>
+        /// Adds a value at the specified row and column.
+        /// </summary>
+        /// <param name="key1">The row to add the value.</param>
+        /// <param name="key2">The column to add the value.</param>
+        /// <param name="value">The value to add.</param>
         public void Add(TRow key1, TCol key2, TValue value)
         {
             var dict = GetInternalSource(key1);
@@ -76,12 +119,21 @@ namespace Myst.Collections
             _count++;
         }
 
+        /// <summary>
+        /// Removes all values from the <see cref="LookupTable{TRow, TCol, TValue}"/>.
+        /// </summary>
         public void Clear()
         {
             _source.Clear();
             _count = 0;
         }
 
+        /// <summary>
+        /// Determines if any item has been inserted at the specified row and column.
+        /// </summary>
+        /// <param name="row">The row to check.</param>
+        /// <param name="col">The column to check.</param>
+        /// <returns></returns>
         public bool ContainsKeys(TRow row, TCol col)
         {
             if(TryGetInternalSource(row, out var inner))
@@ -90,6 +142,10 @@ namespace Myst.Collections
             return false;
         }
 
+        /// <summary>
+        /// Determines if the specified value has been inserted.
+        /// </summary>
+        /// <param name="value">The value to look for.</param>
         public bool ContainsValue(TValue value)
         {
             foreach(var inner in _source.Values)
@@ -103,6 +159,11 @@ namespace Myst.Collections
             return false;
         }
 
+        /// <summary>
+        /// Determines if the specified value exists using the <see cref="IEqualityComparer{T}"/> to determine equality.
+        /// </summary>
+        /// <param name="value">The value to look for.</param>
+        /// <param name="comparer">The <see cref="IEqualityComparer{T}"/> used to determine the equality of the values.</param>
         public bool ContainsValue(TValue value, IEqualityComparer<TValue> comparer)
         {
             foreach (var inner in _source.Values)
@@ -115,7 +176,7 @@ namespace Myst.Collections
             }
             return false;
         }
-
+        
         public IEnumerator<(TRow, TCol, TValue)> GetEnumerator()
         {
             foreach(var row in _source)
@@ -127,6 +188,11 @@ namespace Myst.Collections
             }
         }
 
+        /// <summary>
+        /// Removes a value at the given row and column.
+        /// </summary>
+        /// <param name="row">The row of the value.</param>
+        /// <param name="col">The column of the value.</param>
         public bool Remove(TRow row, TCol col)
         {
             if (TryGetInternalSource(row, out var inner))
@@ -137,6 +203,13 @@ namespace Myst.Collections
             return false;
         }
 
+        /// <summary>
+        /// Attempts to find the value at the given row and column. Returns true if the value was found, false otherwise.
+        /// </summary>
+        /// <param name="row">The row of the value.</param>
+        /// <param name="col">The column of the value.</param>
+        /// <param name="value">When the method returns, this contains the value of the index if successful, otherwise it contains a default value.</param>
+        /// <returns></returns>
         public bool TryGetValue(TRow row, TCol col, out TValue value)
         {
             if (TryGetInternalSource(row, out var inner))

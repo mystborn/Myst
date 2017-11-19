@@ -6,10 +6,12 @@
     <title>$title$</title>
     <authors>$author$</authors>
     <owners>$author$</owners>
+    <licenseUrl>https://github.com/mystborn/Myst/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/mystborn/Myst</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Added useful extension methods.</releaseNotes>
+    <releaseNotes>Added better enumeration through the Trie data structure</releaseNotes>
     <copyright>Copyright 2017</copyright>
-    <tags>Data Structures, Algorithms</tags>
+    <tags>Data-Structures</tags>
   </metadata>
 </package>
