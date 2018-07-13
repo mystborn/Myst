@@ -10,7 +10,7 @@ namespace Myst.Collections
     /// <remarks>
     /// This implementation was loosely based off of the grid data structure present in Gamemker.
     /// </remarks>
-    public class Grid<T> : ICollection<T>, IEnumerable<T>,  IEnumerable
+    public class Grid<T> : ICollection<T>, IEnumerable<T>
     {
         #region Fields
 
@@ -70,6 +70,11 @@ namespace Myst.Collections
             Fill(defaultValue);
         }
 
+        public bool ContainsIndex(int x, int y)
+        {
+            return x >= 0 && x < Width && y >= 0 && y < Height;
+        }
+
         public void CopyTo(Grid<T> destination)
         {
             if (destination.Width < Width)
@@ -125,17 +130,17 @@ namespace Myst.Collections
             SetRegion(0, 0, Width, Height, value);
         }
 
-        public (int x, int y) IndexOf(T item)
+        public Tuple<int, int> IndexOf(T item)
         {
             for(int h = 0; h < Height; h++)
             {
                 for(int w = 0; w < Width; w++)
                 {
                     if (_comparer.Equals(_source[w, h], item))
-                        return (w, h);
+                        return Tuple.Create(w, h);
                 }
             }
-            return (-1, -1);
+            return Tuple.Create(-1, -1);
         }
 
         public void Set(int x, int y, T value)
@@ -184,6 +189,20 @@ namespace Myst.Collections
             return false;
         }
 
+        public bool Contains(T item, IEqualityComparer<T> comparer)
+        {
+            for (int h = 0; h < Height; h++)
+            {
+                for (int w = 0; w < Width; w++)
+                {
+                    if (comparer.Equals(_source[w, h], item))
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
         public void CopyTo(T[] array, int arrayIndex)
         {
             for (int h = 0; h < Height; h++)
@@ -222,6 +241,7 @@ namespace Myst.Collections
 
         public IEnumerator<T> GetEnumerator()
         {
+            //Enumerate over height first to ensure better cache locality.
             for(int h = 0; h < Height; h++)
             {
                 for(int w = 0; w < Width; w++)

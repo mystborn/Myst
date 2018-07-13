@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Myst</RootNamespace>
     <AssemblyName>Myst</AssemblyName>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -44,12 +44,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Collections\Binder_T1.cs" />
+    <Compile Include="Collections\FastBinder.cs" />
+    <Compile Include="Collections\FastList.cs" />
     <Compile Include="Collections\FastPriorityQueue_T1.cs" />
     <Compile Include="Collections\FastPriorityQueue_T2.cs" />
+    <Compile Include="Collections\Interfaces\IBinder.cs" />
+    <Compile Include="Collections\Interfaces\IOrderedDictionary.cs" />
+    <Compile Include="Collections\Interfaces\ITable.cs" />
     <Compile Include="Collections\LookupTable_T3.cs" />
-    <Compile Include="Collections\Table_T3.cs" />
+    <Compile Include="Collections\OrderedDictionary.cs" />
+    <Compile Include="Collections\Trie.cs" />
     <Compile Include="Collections\Trie_T2.cs" />
     <Compile Include="Extensions\ListExt.cs" />
+    <Compile Include="Extensions\ProcessExt.cs" />
     <Compile Include="Extensions\TaskExt.cs" />
     <Compile Include="Internal\FastFibonacciNode.cs" />
     <Compile Include="Collections\Grid_T1.cs" />

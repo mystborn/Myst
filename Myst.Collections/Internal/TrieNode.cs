@@ -64,4 +64,49 @@ namespace Myst.Collections
             }
         }
     }
+
+    internal class TrieNode
+    {
+        public bool IsTerminal => Value != null;
+        public string Value { get; set; } = null;
+        public Dictionary<char, TrieNode> Edges { get; } = new Dictionary<char, TrieNode>();
+
+        public IEnumerable<string> GetValues()
+        {
+            return InternalGetValues(1, 1);
+        }
+
+        public IEnumerable<string> GetValues(int minLetters)
+        {
+            return InternalGetValues(1, minLetters);
+        }
+
+        private IEnumerable<string> InternalGetValues(int deep, int minLetters)
+        {
+            if (deep >= minLetters)
+                if (IsTerminal)
+                    yield return Value;
+
+            foreach (var node in Edges.Values)
+                foreach (var value in node.GetValues(deep + 1, minLetters))
+                    yield return value;
+        }
+
+        public IEnumerable<string> GetValues(int minLetters, int maxLetters)
+        {
+            return InternalGetValues(1, minLetters, maxLetters);
+        }
+
+        private IEnumerable<string> InternalGetValues(int deep, int minLetters, int maxLetters)
+        {
+            if (deep >= minLetters)
+                if (IsTerminal)
+                    yield return Value;
+
+            if (deep <= maxLetters)
+                foreach (var node in Edges.Values)
+                    foreach (var value in node.InternalGetValues(deep + 1, minLetters, maxLetters))
+                        yield return value;
+        }
+    }
 }

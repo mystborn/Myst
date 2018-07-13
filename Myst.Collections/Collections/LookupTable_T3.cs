@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Myst.Collections
 {
-    public class LookupTable<TRow, TCol, TValue>
+    public class LookupTable<TRow, TCol, TValue> : ITable<TRow, TCol, TValue>
     {
         private int _count = 0;
         private int _columns = 0;
@@ -33,7 +33,7 @@ namespace Myst.Collections
                     if (inner.TryGetValue(col, out var value))
                         return value;
                     else
-                        throw new ArgumentException($"No column with the key: {col}", "col");
+                        throw new ArgumentException($"No value at index: {row}, {col}", "col");
                 }
                 else
                     throw new ArgumentException($"No row with the key: {row}", "row");
@@ -57,7 +57,7 @@ namespace Myst.Collections
         /// Constructs a new <see cref="LookupTable{TRow, TCol, TValue}"/> with the values from the given <paramref name="source"/> inserted.
         /// </summary>
         /// <param name="source">A collection of values to be inserted into the table.</param>
-        public LookupTable(ICollection<(TRow row, TCol col, TValue value)> source) : this(source, EqualityComparer<TRow>.Default, EqualityComparer<TCol>.Default) { }
+        public LookupTable(ICollection<TableItem<TRow, TCol, TValue>> source) : this(source, EqualityComparer<TRow>.Default, EqualityComparer<TCol>.Default) { }
 
         /// <summary>
         /// Initializes a new <see cref="LookupTable{TRow, TCol, TValue}"/> with the values from the given <paramref name="source"/> inserted
@@ -66,14 +66,13 @@ namespace Myst.Collections
         /// <param name="source">A collection of values to be inserted into the table.</param>
         /// <param name="rowComparer">The <see cref="IEqualityComparer{T}"/> used when comparing row values.</param>
         /// <param name="columnComparer">The <see cref="IEqualityComparer{T}"/> used when comparing column values.</param>
-        public LookupTable(ICollection<(TRow row, TCol col, TValue value)> source, IEqualityComparer<TRow> rowComparer, IEqualityComparer<TCol> columnComparer)
+        public LookupTable(ICollection<TableItem<TRow, TCol, TValue>> source, IEqualityComparer<TRow> rowComparer, IEqualityComparer<TCol> columnComparer)
         {
             _source = new Dictionary<TRow, Dictionary<TCol, TValue>>(rowComparer);
             _colComparer = columnComparer;
             foreach(var item in source)
             {
-                var inner = GetInternalSource(item.row);
-                inner.Add(item.col, item.value);
+                Add(item);
             }
         }
 
@@ -109,14 +108,19 @@ namespace Myst.Collections
         /// <summary>
         /// Adds a value at the specified row and column.
         /// </summary>
-        /// <param name="key1">The row to add the value.</param>
-        /// <param name="key2">The column to add the value.</param>
+        /// <param name="row">The row to add the value.</param>
+        /// <param name="col">The column to add the value.</param>
         /// <param name="value">The value to add.</param>
-        public void Add(TRow key1, TCol key2, TValue value)
+        public void Add(TRow row, TCol col, TValue value)
         {
-            var dict = GetInternalSource(key1);
-            dict.Add(key2, value);
+            var dict = GetInternalSource(row);
+            dict.Add(col, value);
             _count++;
+        }
+
+        public void Add(TableItem<TRow, TCol, TValue> item)
+        {
+            Add(item.Row, item.Col, item.Value);
         }
 
         /// <summary>
@@ -134,7 +138,7 @@ namespace Myst.Collections
         /// <param name="row">The row to check.</param>
         /// <param name="col">The column to check.</param>
         /// <returns></returns>
-        public bool ContainsKeys(TRow row, TCol col)
+        public bool ContainsIndex(TRow row, TCol col)
         {
             if(TryGetInternalSource(row, out var inner))
                 return inner.ContainsKey(col);
@@ -177,13 +181,13 @@ namespace Myst.Collections
             return false;
         }
         
-        public IEnumerator<(TRow, TCol, TValue)> GetEnumerator()
+        public IEnumerator<TableItem<TRow, TCol, TValue>> GetEnumerator()
         {
             foreach(var row in _source)
             {
                 foreach(var col in row.Value)
                 {
-                    yield return (row.Key, col.Key, col.Value);
+                    yield return new TableItem<TRow, TCol, TValue>(row.Key, col.Key, col.Value);
                 }
             }
         }

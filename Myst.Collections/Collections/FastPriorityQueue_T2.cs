@@ -5,7 +5,12 @@ using System.Linq;
 
 namespace Myst.Collections
 {
-    public class FastPriorityQueue<TValue, TPriority> : ICollection<(TValue item, TPriority priority)>
+    /// <summary>
+    /// Minimalist Priority Queue implemented using a Fibonacci Heap.
+    /// </summary>
+    /// <typeparam name="TValue"></typeparam>
+    /// <typeparam name="TPriority"></typeparam>
+    public class FastPriorityQueue<TValue, TPriority> : ICollection<KeyValuePair<TValue, TPriority>>
     {
         private IComparer<TPriority> _comparer;
         private FastFibonacciNode<TValue, TPriority> _head = null;
@@ -59,9 +64,9 @@ namespace Myst.Collections
             _count++;
         }
 
-        public void Add((TValue item, TPriority priority) pair)
+        public void Add(KeyValuePair<TValue, TPriority> pair)
         {
-            var node = new FastFibonacciNode<TValue, TPriority>(pair.item, pair.priority);
+            var node = new FastFibonacciNode<TValue, TPriority>(pair.Key, pair.Value);
 
             if (_head == null)
                 _head = node;
@@ -72,7 +77,7 @@ namespace Myst.Collections
                 _head.Right = node;
                 node.Right.Left = node;
 
-                if (_comparer.Compare(pair.priority, _head.Key) < 0)
+                if (_comparer.Compare(pair.Value, _head.Key) < 0)
                     _head = node;
             }
 
@@ -94,18 +99,18 @@ namespace Myst.Collections
         {
             foreach(var pair in this)
             {
-                if (pair.item.Equals(item) && pair.priority.Equals(priority))
+                if (pair.Key.Equals(item) && pair.Value.Equals(priority))
                     return true;
             }
 
             return false;
         }
 
-        public bool Contains((TValue item, TPriority priority) item)
+        public bool Contains(KeyValuePair<TValue, TPriority> item)
         {
             foreach (var pair in this)
             {
-                if (pair.item.Equals(item.item) && pair.priority.Equals(item.priority))
+                if (pair.Key.Equals(item.Key) && pair.Value.Equals(item.Value))
                     return true;
             }
 
@@ -118,7 +123,7 @@ namespace Myst.Collections
             _count = 0;
         }
 
-        public void CopyTo((TValue item, TPriority priority)[] array, int arrayIndex)
+        public void CopyTo(KeyValuePair<TValue, TPriority>[] array, int arrayIndex)
         {
             foreach (var value in this)
                 array[arrayIndex++] = value;
@@ -172,12 +177,12 @@ namespace Myst.Collections
             return result;
         }
 
-        public (TValue item, TPriority priority) DequeuePair()
+        public KeyValuePair<TValue, TPriority> DequeuePair()
         {
             if (_count == 0)
                 throw new InvalidOperationException("Cannot remove value from an empty collection.");
 
-            var result = (_head.Value, _head.Key);
+            var result = new KeyValuePair < TValue, TPriority>(_head.Value, _head.Key);
             int children = _head.Degree;
             var current = _head.Child;
 
@@ -219,7 +224,7 @@ namespace Myst.Collections
             Add(item, priority);
         }
 
-        bool ICollection<(TValue item, TPriority priority)>.Remove((TValue item, TPriority priority) item)
+        bool ICollection<KeyValuePair<TValue, TPriority>>.Remove(KeyValuePair<TValue, TPriority>item)
         {
             throw new NotImplementedException();
         }
@@ -229,9 +234,9 @@ namespace Myst.Collections
             return _head.Value;
         }
 
-        public IEnumerator<(TValue item, TPriority priority)> GetEnumerator()
+        public IEnumerator<KeyValuePair<TValue, TPriority>> GetEnumerator()
         {
-            foreach (var item in GetChildren(_head).Select(node => (node.Value, node.Key)))
+            foreach (var item in GetChildren(_head).Select(node => new KeyValuePair<TValue, TPriority>(node.Value, node.Key)))
                 yield return item;
         }
 

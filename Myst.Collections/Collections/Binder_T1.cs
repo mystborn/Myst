@@ -8,7 +8,7 @@ namespace Myst.Collections
     /// Collection used to bind instances of <see cref="T"/> to an index.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class Binder<T>
+    public class Binder<T> : IBinder<T>
     {
         #region Fields
 
@@ -146,6 +146,11 @@ namespace Myst.Collections
         {
             foreach (var index in _map.Values)
                 yield return _binder[index];
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
 
         #endregion

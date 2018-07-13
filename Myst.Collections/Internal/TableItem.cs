@@ -21,7 +21,7 @@ namespace Myst.Collections
 
         public override bool Equals(object obj)
         {
-            if (!ReferenceEquals(obj, null) && obj is TableItem<TRow, TCol, TValue> item)
+            if (obj is TableItem<TRow, TCol, TValue> item)
                 return Equals(item);
 
             return false;
@@ -36,9 +36,8 @@ namespace Myst.Collections
 
         public static bool operator==(TableItem<TRow, TCol, TValue> left, TableItem<TRow, TCol, TValue> right)
         {
-            var leftIsNull = ReferenceEquals(left, null);
-            var rightIsNull = ReferenceEquals(right, null);
-            return (leftIsNull == rightIsNull) || (!leftIsNull && left.Equals(right));
+            //Don't check for nullity, this is a struct.
+            return left.Equals(right);
         }
 
         public static bool operator!=(TableItem<TRow, TCol, TValue> left, TableItem<TRow, TCol, TValue> right)
@@ -48,16 +47,14 @@ namespace Myst.Collections
 
         public override int GetHashCode()
         {
-            const int offset = 13;
-            int hash;
             unchecked
             {
-                hash = Row.GetHashCode() * offset;
-                hash *= Col.GetHashCode() * offset;
-                hash *= Value.GetHashCode();
+                int hash = 17;
+                hash = hash * 23 + Row.GetHashCode();
+                hash = hash * 23 + Col.GetHashCode();
+                hash = hash * 23 + Value.GetHashCode();
+                return hash;
             }
-
-            return hash;
         }
     }
 }
